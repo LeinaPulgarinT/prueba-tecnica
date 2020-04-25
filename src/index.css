@@ -1,7 +1,9 @@
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&display=swap");
+
 body {
   margin: 0;
   padding: 0;
-  font-family: sans-serif;
+  font-family: "Open Sans", sans-serif;
 }
 nav .brand-logo {
   display: block;
@@ -74,6 +76,7 @@ input[type="text"]:not(.browser-default):focus:not([readonly]) + label {
 h1 {
   margin: 0 !important;
 }
-.temperatura {
+.temperatura,
+.borde {
   border: 1px solid black;
 }

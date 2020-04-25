@@ -5,6 +5,10 @@ import Formulario from "./components/Formulario";
 import Clima from "./components/Clima";
 
 function App() {
+  let mensajeInicial = JSON.parse(localStorage.getItem("summary"));
+  if (!mensajeInicial) {
+    mensajeInicial = [];
+  }
   let diasIniciales = JSON.parse(localStorage.getItem("dias"));
   if (!diasIniciales) {
     diasIniciales = [];
@@ -42,6 +46,7 @@ function App() {
   const [horas, guardarHourly] = useState([horaInicial]);
   const [coordenadas, guardarCoordenadas] = useState({ coordenadasIniciales });
   const [dias, guardarDias] = useState({ diasIniciales });
+  const [summary, guardarMensaje] = useState({ mensajeInicial });
 
   const consultarMapbox = async () => {
     const token =
@@ -84,7 +89,7 @@ function App() {
 
   const consultarDarkSky = async () => {
     const apiKey = "88030114c5e47763a011a75e7a10c633";
-    const url = `https://cors-anywhere.herokuapp.com/https://api.darksky.net/forecast/${apiKey}/${latitud},${longitud} `;
+    const url = `https://cors-anywhere.herokuapp.com/https://api.darksky.net/forecast/${apiKey}/${latitud},${longitud}?lang=es `;
 
     //Consultar la URL
     const res = await fetch(url);
@@ -92,11 +97,19 @@ function App() {
     console.log(result);
     // console.log(result.currently.temperature);
     // console.log(result.hourly.data[0].temperature);
-    console.log(result.daily);
+    // console.log(result.daily);
+
+    let mensaje = result.daily.data[0].summary;
+    let high = result.daily.data[0].temperatureMax;
+    let low = result.daily.data[0].temperatureMin;
+
+    let summary = { mensaje, high, low };
+    guardarMensaje(summary);
 
     // let latitud = resultado.features[0].geometry.coordinates[1];
     let temperature = result.currently.temperature;
     guardartemperature(temperature);
+    // console.log(result.currently);
     let horas = result.hourly.data[0].temperature;
     guardarHourly(horas);
 
@@ -120,6 +133,13 @@ function App() {
       diaSiete,
     };
     guardarDias(dias);
+
+    let mensajeInicial = JSON.parse(localStorage.getItem("summary"));
+    if (mensajeInicial) {
+      localStorage.setItem("summary", JSON.stringify(summary));
+    } else {
+      localStorage.setItem("summary", JSON.stringify([]));
+    }
 
     let diasIniciales = JSON.parse(localStorage.getItem("dias"));
     if (diasIniciales) {
@@ -176,7 +196,7 @@ function App() {
   // }
   return (
     <div className="App header">
-      <Header titulo="Clima React App" />
+      <Header titulo="DARK SKY" />
 
       <div className="">
         <div className="container">
@@ -193,6 +213,9 @@ function App() {
                 time={horas}
                 location={coordenadas.latitud}
                 today={dias.hoy}
+                description={summary.mensaje}
+                temperatureMax={summary.high}
+                temperatureMin={summary.low}
               />
               <h1></h1>
             </div>
